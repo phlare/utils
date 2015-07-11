@@ -50,12 +50,12 @@ class Stack {
 	// just using print_r on each node for now
 	public function display() {
 		if ($this->_top === null) {
-			echo "list is empty";
+			echo "stack is empty";
 		}
 
 		$printData = array(
 			'count' => $this->_count,
-			'list' => $this->_top
+			'stack' => $this->_top
 		);
 
 		print_r($printData);
