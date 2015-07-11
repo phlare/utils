@@ -62,17 +62,42 @@ class LinkedList {
 		}
 	}
 
-	public function find($value) {
-
-	}
-
+	// reverses order of list
 	public function reverse() {
+		// if the list is empty or only has one element, do nothing
+		if ($this->_count > 1) {
 
+			// iterate through, fixing the pointers as we go
+			$current = $this->_firstNode;
+			$previous = null;
+			while ($current !== null) {
+				if ($current == $this->_firstNode) {
+					$this->_lastNode = $current;
+				}
+				$next = $current->next;
+				$current->next = $previous;
+				$previous = $current;
+				$current = $next;
+			}
+			$this->_firstNode = $previous;
+		}
 	}
 
 	// deletes by value
 	public function delete($value) {
-
+		// iterate through until end or until we find the key
+		$current = $this->_firstNode;
+		$previous = NULL;
+		// while we haven't found the key...
+		while ($current->getData() !== $value) {
+			// if we've reached the end without finding it, return null
+			if ($current->next === null) {
+				return null;
+			}
+			$previous = $current;
+			$current = $current->next;
+		}
+		$this->_executeDelete($current, $previous);
 	}
 
 	// deltes by key
@@ -86,15 +111,21 @@ class LinkedList {
 				$previous = $current;
 				$current = $current->next;
 			}
-			if ($key === 0) {
-				$this->_firstNode = $current->next;
-			} else {
-				//  set the next property of the previous item to be the item after the one we're deleting
-				$previous->next = $current->next;
-			}
-
-			$this->_count--;
+			$this->_executeDelete($current, $previous);
 		}
+	}
+
+	// helper function for the other deletes
+	private function _executeDelete(&$current, &$previous) {
+		// if there is no previous, than set the firstNode properly to the node after what we're deleting
+		if ($previous === NULL) {
+			$this->_firstNode = $current->next;
+		} else {
+			// otherwise set the next property of the previous item to be the item after the one we're deleting
+			$previous->next = $current->next;
+		}
+		// decrement count
+		$this->_count--;
 	}
 
 	public function emptyList() {
@@ -117,18 +148,16 @@ class LinkedList {
 
 	// just using print_r on each node for now
 	public function display() {
-		// if ($this->_firstNode === null) {
-		// 	echo "list is empty";
-		// }
-		// // iterate through and print each node
-		// $current = $this->_firstNode;
-		// while($current !== null) {
-		// 	print_r($current);
-		// 	$current = $current->next;
-		// }
+		if ($this->_firstNode === null) {
+			echo "list is empty";
+		}
 
-		// for now just doing print_r on the first node
-		print_r($this->_firstNode);
+		$printData = array(
+			'count' => $this->_count,
+			'list' => $this->_firstNode
+		);
+
+		print_r($printData);
 	}
 
 

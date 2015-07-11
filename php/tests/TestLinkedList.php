@@ -80,6 +80,16 @@ class testLinkedList {
 			self::printError("problem with deleteAt: deleted node still present");
 		}
 
+		// test deleting by value
+		$linkedList->delete('insertedAt2');
+
+		// test reverse
+		$linkedList->reverse();
+		if ($linkedList->getAt(0) !== 'insertEnd') {
+			self::printError("problem with reverse");
+		}
+		$linkedList->reverse();
+
 		// display... for now
 		$linkedList->display();
 
