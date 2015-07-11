@@ -22,16 +22,19 @@ class LinkedList {
 		return $this->_count;
 	}
 
+	// insert new node at front of list
 	public function insertFront($data) {
 		// just use insertAt
 		$this->insertAt($data, 0);
 	}
 
+	// insert new node at end of list
 	public function insertEnd($data) {
 		// just use insertAt
 		$this->insertAt($data, $key = $this->_count);
 	}
 
+	// insert new node at a given index
 	public function insertAt($data, $key) {
 		// verify this is a reasonable key
 		if ($key <= $this->_count && $key >= 0) {
@@ -128,11 +131,13 @@ class LinkedList {
 		$this->_count--;
 	}
 
+	// completely empties the list
 	public function emptyList() {
 		$this->_firstNode = $this->_lastNode = null;
 		$this->_count = 0;
 	}
 
+	// get teh value of a node at a given index
 	public function getAt($key) {
 		// use _count to make sure this is a reasonable key
 		if ($key >= $this->_count || $key < 0) {
@@ -163,6 +168,9 @@ class LinkedList {
 
 }
 
+/**
+ * ListNode class defines the individual nodes in our LinkedList
+ */
 class ListNode {
 	public $data;
 	public $next;
@@ -172,6 +180,7 @@ class ListNode {
 		$this->next = $next; // not sure if i'll use this yet
 	}
 
+	// gets the data in a particular node
 	public function getData() {
 		return $this->data;
 	}
