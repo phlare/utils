@@ -40,7 +40,11 @@ class Stack {
 		$tmp = $this->_top;
 		$this->_top = $this->_top->next;
 		$this->_count--;
-		return $tmp;
+
+		// return just the data from this node
+		$data = $tmp->getdata();
+		unset($tmp); // clean up this node
+		return $data;
 	}
 
 	// just using print_r on each node for now
