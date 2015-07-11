@@ -8,6 +8,7 @@
  * @version    0.01
  */
 class LinkedList {
+
 	private $_firstNode;
 	private $_lastNode;
 	private $_count;
@@ -18,6 +19,7 @@ class LinkedList {
 		$this->_count = 0;
 	}
 
+	// returns count of elements in list
 	public function getCount() {
 		return $this->_count;
 	}
