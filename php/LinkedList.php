@@ -155,9 +155,6 @@ class LinkedList {
 
 	// just using print_r on each node for now
 	public function display() {
-		if ($this->_firstNode === null) {
-			echo "list is empty";
-		}
 
 		$printData = array(
 			'count' => $this->_count,

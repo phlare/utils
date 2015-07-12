@@ -59,9 +59,6 @@ class Queue {
 
 	// just using print_r on each node for now
 	public function display() {
-		if ($this->_front === null) {
-			echo "queue is empty";
-		}
 
 		$printData = array(
 			'count' => $this->_count,

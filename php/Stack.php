@@ -49,9 +49,6 @@ class Stack {
 
 	// just using print_r on each node for now
 	public function display() {
-		if ($this->_top === null) {
-			echo "stack is empty";
-		}
 
 		$printData = array(
 			'count' => $this->_count,
