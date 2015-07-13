@@ -67,8 +67,16 @@ class LinkedList {
 		}
 	}
 
-	// reverses order of list
-	public function reverse() {
+	public function reverse($method='iterative') {
+		if ($method === 'iterative') {
+			$this->_reverse();
+		} elseif ($method === 'recursive') {
+			$this->_reverseRecursive($this->_firstNode);
+		}
+	}
+
+	// reverses order of list iteratively
+	private function _reverse() {
 		// if the list is empty or only has one element, do nothing
 		if ($this->_count > 1) {
 
@@ -86,6 +94,29 @@ class LinkedList {
 			}
 			$this->_firstNode = $previous;
 		}
+	}
+
+	// reverses order of the list recursively
+	private function _reverseRecursive(&$root) {
+
+		// split what we have into the first node and the rest of the nodes
+		$first = $root;
+		$rest = $root->next;
+
+		// there's only one node, so no need to reverse
+		if (!$rest) {
+			return;
+		}
+		// reverse the rest
+		$this->_reverseRecursive($rest);
+		// set the pointer from the next node back to here.
+		// so basically the next node's next pointer.
+		$first->next->next = $first;
+		// now get rid of our pointer to that node
+		$first->next = null;
+
+		// fix the pointer to the head of the list
+		$root = $rest;
 	}
 
 	// deletes by value
