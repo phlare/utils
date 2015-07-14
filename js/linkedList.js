@@ -45,8 +45,29 @@ var LinkedList = function() {
   };
   this.insertEnd = function(data) {
     return this.insertAt(data, this.count);
-  }
+  };
 
+  // delete an item by key
+  this.deleteAt = function(idx) {
+    if (idx >= 0 && idx < this.count) {
+      var current = this.head;
+      var previous = null;
+      for (var i=0; i<idx; i++) {
+        previous = current;
+        current = current.next;
+      }
+      if (previous === null) {
+        this.head = current.next;
+      } else {
+        previous.next = current.next;
+      }
+      if (current.next === null) {
+        this.tail = previous;
+      }
+      this.count --;
+    }
+    return this;
+  };
 
   // helper function for reverse, allows specifying reverse method
   this.reverseList = function(reverseMethod) {
@@ -119,7 +140,7 @@ var LinkedList = function() {
     this.tail = null;
     this.count = 0;
     return this;
-  }
+  };
 
 };
 
