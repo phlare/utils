@@ -84,14 +84,16 @@ class testLinkedList {
 		$linkedList->delete('insertedAt2');
 
 		// test reverse
-		$linkedList->reverse();
+		$linkedList->reverse('recursive');
 		if ($linkedList->getAt(0) !== 'insertEnd') {
 			self::printError("problem with reverse");
 		}
-		$linkedList->reverse();
 
+		$linkedList->reverse();
 		// display... for now
-		$linkedList->display();
+		// $linkedList->debug();
+
+		$linkedList->printList('reverse');
 
 		// test empty
 		$linkedList->emptyList();

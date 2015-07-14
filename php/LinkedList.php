@@ -67,8 +67,16 @@ class LinkedList {
 		}
 	}
 
-	// reverses order of list
-	public function reverse() {
+	public function reverse($method='iterative') {
+		if ($method === 'iterative') {
+			$this->_reverse();
+		} elseif ($method === 'recursive') {
+			$this->_reverseRecursive($this->_firstNode);
+		}
+	}
+
+	// reverses order of list iteratively
+	private function _reverse() {
 		// if the list is empty or only has one element, do nothing
 		if ($this->_count > 1) {
 
@@ -86,6 +94,29 @@ class LinkedList {
 			}
 			$this->_firstNode = $previous;
 		}
+	}
+
+	// reverses order of the list recursively
+	private function _reverseRecursive(&$head) {
+
+		// split what we have into the first node and the rest of the nodes
+		$first = $head;
+		$rest = $head->next;
+
+		// there's only one node, so no need to reverse
+		if (!$rest) {
+			return;
+		}
+		// reverse the rest
+		$this->_reverseRecursive($rest);
+		// set the pointer from the next node back to here.
+		// so basically the next node's next pointer.
+		$first->next->next = $first;
+		// now get rid of our pointer to that node
+		$first->next = null;
+
+		// fix the pointer to the head of the list
+		$head = $rest;
 	}
 
 	// deletes by value
@@ -139,7 +170,7 @@ class LinkedList {
 		$this->_count = 0;
 	}
 
-	// get teh value of a node at a given index
+	// get the value of a node at a given index
 	public function getAt($key) {
 		// use _count to make sure this is a reasonable key
 		if ($key >= $this->_count || $key < 0) {
@@ -153,8 +184,28 @@ class LinkedList {
 		return $current->getData();
 	}
 
+	// public function for printing with accessible order variable
+	public function printList($order='normal') {
+		$this->_printList($this->_firstNode, $order);
+	}
+
+	// prints the list in order, one line for each node
+	private function _printList($head, $order='normal') {
+		if ($order === 'normal') {
+			print_r($head->getData());
+			print "\n";
+		}
+		if ($head->next) {
+			$this->_printList($head->next, $order);
+		}
+		if ($order === 'reverse') {
+			print_r($head->getData());
+			print "\n";
+		}
+	}
+
 	// just using print_r on each node for now
-	public function display() {
+	public function debug() {
 
 		$printData = array(
 			'count' => $this->_count,
