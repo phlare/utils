@@ -28,8 +28,9 @@ var LinkedList = function() {
       if (this.head === null || idx === 0) {
         this.head = newNode;
       }
-      // set tail if it's empty
-      if (this.tail === null) {
+      // set tail if it's empty or if we inserted at end
+      // make sure to do this before incrementing count
+      if (this.tail === null || idx === this.count) {
         this.tail = newNode;
       }
       // increment count
@@ -132,21 +133,19 @@ var ListNode = function(data) {
 console.log('------ creating Linked List');
 var testLL = new LinkedList();
 console.log('------ adding Nodes Linked List');
-testLL.insertEnd(1);
-testLL.insertEnd(2);
-testLL.insertEnd(3);
-testLL.insertEnd(4);
+
+// methods should be chainable
+testLL
+  .insertFront(0)
+  .insertEnd(1)
+  .insertEnd(2)
+  .insertEnd(3)
+  .insertEnd(4);
 testLL.insertEnd(5);
-// console.log(testLL.head);
+testLL.insertEnd(6);
+testLL.insertEnd(7);
+testLL.insertEnd(8);
+testLL.insertEnd(9);
+testLL.insertAt('ten', 10);
 
-console.log('------ reversing list (iterative)');
-testLL.reverseList();
-console.log(testLL.head);
-
-console.log('------ reversing list (recursive 1)');
-testLL.reverseList('recursive');
-  console.log(testLL.head)
-
-console.log('------ reversing list (recursive 2)');
-testLL.reverseList('recursive');
-  console.log(testLL.head)
+console.log(testLL);
