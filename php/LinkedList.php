@@ -97,11 +97,11 @@ class LinkedList {
 	}
 
 	// reverses order of the list recursively
-	private function _reverseRecursive(&$root) {
+	private function _reverseRecursive(&$head) {
 
 		// split what we have into the first node and the rest of the nodes
-		$first = $root;
-		$rest = $root->next;
+		$first = $head;
+		$rest = $head->next;
 
 		// there's only one node, so no need to reverse
 		if (!$rest) {
@@ -116,7 +116,7 @@ class LinkedList {
 		$first->next = null;
 
 		// fix the pointer to the head of the list
-		$root = $rest;
+		$head = $rest;
 	}
 
 	// deletes by value
@@ -170,7 +170,7 @@ class LinkedList {
 		$this->_count = 0;
 	}
 
-	// get teh value of a node at a given index
+	// get the value of a node at a given index
 	public function getAt($key) {
 		// use _count to make sure this is a reasonable key
 		if ($key >= $this->_count || $key < 0) {
@@ -184,8 +184,28 @@ class LinkedList {
 		return $current->getData();
 	}
 
+	// public function for printing with accessible order variable
+	public function printList($order='normal') {
+		$this->_printList($this->_firstNode, $order);
+	}
+
+	// prints the list in order, one line for each node
+	private function _printList($head, $order='normal') {
+		if ($order === 'normal') {
+			print_r($head->getData());
+			print "\n";
+		}
+		if ($head->next) {
+			$this->_printList($head->next, $order);
+		}
+		if ($order === 'reverse') {
+			print_r($head->getData());
+			print "\n";
+		}
+	}
+
 	// just using print_r on each node for now
-	public function display() {
+	public function debug() {
 
 		$printData = array(
 			'count' => $this->_count,
