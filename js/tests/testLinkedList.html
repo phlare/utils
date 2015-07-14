@@ -6,6 +6,40 @@
 </head>
 <body>
 	<a href="index.html">back</a><br />
-	check the console for output.
+	linkedList.js loaded. check the console for output.
+	<script type="text/javascript">
+
+		console.log('------ creating Linked List');
+		var testLL = new LinkedList();
+		console.log('------ adding Nodes to Linked List');
+
+		// methods should be chainable
+		testLL
+		  .insertFront(0)
+		  .insertEnd(1)
+		  .insertEnd(2)
+		  .insertEnd(3)
+		  .insertEnd(4);
+		testLL.insertEnd(5);
+		testLL.insertEnd('six');
+		testLL.insertEnd(7);
+		testLL.insertEnd(8);
+		testLL.insertEnd(9);
+
+		console.log('------ testing deletes');
+		// test deletes
+		testLL
+		  .insertAt(10, 'ten')
+		  .deleteByValue(2)
+		  .insertAt(2, 'two')
+		  .deleteByValue(4)
+		  .insertAt(4,'four');
+
+		console.log('------ testing reverses');
+		testLL.reverseList();
+		testLL.reverseList('recursive');
+
+		console.log(testLL.reverseList('recursive2'));
+	</script>
 </body>
 </html>

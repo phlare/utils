@@ -1,8 +1,10 @@
+// A class to describe a Linked list.
+// Used for practice and demonstration rather than as a production library
 var LinkedList = function() {
   this.head = null;
   this.tail = null;
   this.count = 0;
-
+  return this;
 };
 
 // function for adding nodes
@@ -163,47 +165,9 @@ LinkedList.prototype.emptyList = function() {
   return this;
 };
 
-
-
-
+// simple class to describe a node of the linked list
 var ListNode = function(data) {
   this.data = data;
   this.next = null;
+  return this;
 };
-
-console.log('------ creating Linked List');
-var testLL = new LinkedList();
-console.log('------ adding Nodes to Linked List');
-
-// methods should be chainable
-testLL
-  .insertFront(0)
-  .insertEnd(1)
-  .insertEnd(2)
-  .insertEnd(3)
-  .insertEnd(4);
-testLL.insertEnd(5);
-testLL.insertEnd('six');
-testLL.insertEnd(7);
-testLL.insertEnd(8);
-testLL.insertEnd(9);
-
-console.log('------ testing deletes');
-// test deletes
-testLL
-  .insertAt(10, 'ten')
-  .deleteByValue(2)
-  .insertAt(2, 'two')
-  .deleteByValue(4)
-  .insertAt(4,'four');
-
-console.log('------ testing reverses');
-testLL.reverseList();
-testLL.reverseList('recursive');
-
-console.log(testLL.reverseList('recursive2'));
-
-
-
-
-
