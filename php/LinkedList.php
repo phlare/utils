@@ -58,8 +58,8 @@ class LinkedList {
 			if ($this->_firstNode === null || $key == 0) {
 				$this->_firstNode = &$newNode;
 			}
-			// if there isnt' any lastNode yet, this is it
-			if ($this->_lastNode === null) {
+			// if there isnt' any lastNode yet, or we're inserting at the end, this is it
+			if ($this->_lastNode === null || $key == $this->_count) {
 				$this->_lastNode = &$newNode;
 			}
 			// increment the count
@@ -159,6 +159,9 @@ class LinkedList {
 		} else {
 			// otherwise set the next property of the previous item to be the item after the one we're deleting
 			$previous->next = $current->next;
+		}
+		if ($current->next === null) {
+			$this->lastNode = $previous;
 		}
 		// decrement count
 		$this->_count--;

@@ -4,7 +4,7 @@ var LinkedList = function() {
   this.count = 0;
 
   // function for adding nodes
-  this.insertAt = function(data, idx) {
+  this.insertAt = function(idx, data) {
     // default to 0
     idx = idx || 0;
     // reject bad keys
@@ -28,8 +28,9 @@ var LinkedList = function() {
       if (this.head === null || idx === 0) {
         this.head = newNode;
       }
-      // set tail if it's empty
-      if (this.tail === null) {
+      // set tail if it's empty or if we inserted at end
+      // make sure to do this before incrementing count
+      if (this.tail === null || idx === this.count) {
         this.tail = newNode;
       }
       // increment count
@@ -40,12 +41,52 @@ var LinkedList = function() {
 
   // a few insert helpers
   this.insertFront = function(data) {
-    return this.insertAt(data,0);
+    return this.insertAt(0, data);
   };
   this.insertEnd = function(data) {
-    return this.insertAt(data, this.count);
-  }
+    return this.insertAt(this.count, data);
+  };
 
+  // delete an item by key
+  this.deleteAt = function(idx) {
+    if (idx >= 0 && idx < this.count) {
+      var current = this.head;
+      var previous = null;
+      for (var i=0; i<idx; i++) {
+        previous = current;
+        current = current.next;
+      }
+      return this.executeDelete(current, previous);
+    }
+    return this;
+  };
+
+  this.deleteByValue = function(value) {
+    var current = this.head;
+    var previous = null;
+    while (current.data !== value) {
+      if (current.next === null) {
+        return this;
+      }
+      previous = current;
+      current = current.next;
+    }
+    return this.executeDelete(current, previous);
+  };
+
+  // helper function for the other delet methods
+  this.executeDelete = function(current, previous) {
+    if (previous === null) {
+        this.head = current.next;
+      } else {
+        previous.next = current.next;
+      }
+      if (current.next === null) {
+        this.tail = previous;
+      }
+      this.count --;
+      return this;
+  };
 
   // helper function for reverse, allows specifying reverse method
   this.reverseList = function(reverseMethod) {
@@ -118,7 +159,7 @@ var LinkedList = function() {
     this.tail = null;
     this.count = 0;
     return this;
-  }
+  };
 
 };
 
@@ -131,22 +172,37 @@ var ListNode = function(data) {
 
 console.log('------ creating Linked List');
 var testLL = new LinkedList();
-console.log('------ adding Nodes Linked List');
-testLL.insertEnd(1);
-testLL.insertEnd(2);
-testLL.insertEnd(3);
-testLL.insertEnd(4);
+console.log('------ adding Nodes to Linked List');
+
+// methods should be chainable
+testLL
+  .insertFront(0)
+  .insertEnd(1)
+  .insertEnd(2)
+  .insertEnd(3)
+  .insertEnd(4);
 testLL.insertEnd(5);
-// console.log(testLL.head);
+testLL.insertEnd('six');
+testLL.insertEnd(7);
+testLL.insertEnd(8);
+testLL.insertEnd(9);
 
-console.log('------ reversing list (iterative)');
+console.log('------ testing deletes');
+// test deletes
+testLL
+  .insertAt(10, 'ten')
+  .deleteByValue(2)
+  .insertAt(2, 'two')
+  .deleteByValue(4)
+  .insertAt(4,'four');
+
+console.log('------ testing reverses');
 testLL.reverseList();
-console.log(testLL.head);
-
-console.log('------ reversing list (recursive 1)');
 testLL.reverseList('recursive');
-  console.log(testLL.head)
 
-console.log('------ reversing list (recursive 2)');
-testLL.reverseList('recursive');
-  console.log(testLL.head)
+console.log(testLL.reverseList('recursive2'));
+
+
+
+
+
