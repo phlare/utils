@@ -4,7 +4,7 @@ var LinkedList = function() {
   this.count = 0;
 
   // function for adding nodes
-  this.insertAt = function(data, idx) {
+  this.insertAt = function(idx, data) {
     // default to 0
     idx = idx || 0;
     // reject bad keys
@@ -41,10 +41,10 @@ var LinkedList = function() {
 
   // a few insert helpers
   this.insertFront = function(data) {
-    return this.insertAt(data,0);
+    return this.insertAt(0, data);
   };
   this.insertEnd = function(data) {
-    return this.insertAt(data, this.count);
+    return this.insertAt(this.count, data);
   };
 
   // delete an item by key
@@ -56,7 +56,27 @@ var LinkedList = function() {
         previous = current;
         current = current.next;
       }
-      if (previous === null) {
+      return this.executeDelete(current, previous);
+    }
+    return this;
+  };
+
+  this.deleteByValue = function(value) {
+    var current = this.head;
+    var previous = null;
+    while (current.data !== value) {
+      if (current.next === null) {
+        return this;
+      }
+      previous = current;
+      current = current.next;
+    }
+    return this.executeDelete(current, previous);
+  };
+
+  // helper function for the other delet methods
+  this.executeDelete = function(current, previous) {
+    if (previous === null) {
         this.head = current.next;
       } else {
         previous.next = current.next;
@@ -65,8 +85,7 @@ var LinkedList = function() {
         this.tail = previous;
       }
       this.count --;
-    }
-    return this;
+      return this;
   };
 
   // helper function for reverse, allows specifying reverse method
@@ -153,7 +172,7 @@ var ListNode = function(data) {
 
 console.log('------ creating Linked List');
 var testLL = new LinkedList();
-console.log('------ adding Nodes Linked List');
+console.log('------ adding Nodes to Linked List');
 
 // methods should be chainable
 testLL
@@ -163,10 +182,27 @@ testLL
   .insertEnd(3)
   .insertEnd(4);
 testLL.insertEnd(5);
-testLL.insertEnd(6);
+testLL.insertEnd('six');
 testLL.insertEnd(7);
 testLL.insertEnd(8);
 testLL.insertEnd(9);
-testLL.insertAt('ten', 10);
 
-console.log(testLL);
+console.log('------ testing deletes');
+// test deletes
+testLL
+  .insertAt(10, 'ten')
+  .deleteByValue(2)
+  .insertAt(2, 'two')
+  .deleteByValue(4)
+  .insertAt(4,'four');
+
+console.log('------ testing reverses');
+testLL.reverseList();
+testLL.reverseList('recursive');
+
+console.log(testLL.reverseList('recursive2'));
+
+
+
+
+
