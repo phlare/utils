@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="../tree.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../css/tree.css" />
+	<title>Tree</title>
+
+</head>
+<body>
+	<a href="index.html">back to list</a><br />
+	<p>
+		tree.js loaded. check the console for output.
+	</p>
+
+	<script type="text/javascript">
+		//  for now, putting the test js here, until i get jasmine or something else going
+		var testTree = new Tree();
+
+		testTree.addNode(1);
+		testTree.addNode(2);
+		testTree.addNode(3);
+		testTree.addNode(4);
+		testTree.addNode(5);
+		testTree.addNode(6);
+
+		var node_two = testTree.root.children[1];
+		if (typeof node_two !== 'object') {
+			console.log("error accessing children by key");
+		} else {
+			testTree.addNode(12,'grandchild',node_two);
+			testTree.addNode(13,'grandchild',node_two);
+			testTree.addNode(14,'grandchild',node_two);
+			testTree.addNode(15,'grandchild',node_two);
+		}
+
+		var node_five = testTree.root.children[4];
+		if (typeof node_five !== 'object') {
+			console.log("error accessing children by key");
+		} else {
+			testTree.addNode(7, 'grandchild', node_five);
+			testTree.addNode(8, 'grandchild', node_five);
+			testTree.addNode(9, 'grandchild', node_five);
+		}
+		testTree.display();
+
+
+	</script>
+
+</body>
+</html>
