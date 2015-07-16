@@ -40,12 +40,27 @@ BinaryHeap.prototype = {
     return front;
   },
 
-  remove: function(node) {
+  // remove basically has do do what pop does,
+  // but it also needs to bubbleUp and I choose to do that before sinking Down
+  // but since we don't know how far down
+  remove: function(element) {
     // find element in array
-    // once found, pop element off end
-    // if the one we want was at the end, then we're done
-    // otherwise replace the one we're meant to remove with the one popped
-    // and the let it bubble up AND sink down
+    var length = this.content.length;
+
+    for (var i = 0; i < length; i++) {
+      // iterate through until match is found
+      if (this.content[i] != element) continue;
+      // once found, pop element off end
+      var end = this.content.pop();
+      // if the one we want was at the end, then we're done
+      if (i === length - 1) break;
+      // otherwise replace the one we're meant to remove with the one popped
+      this.content[i] = end;
+      // and the let it bubble up AND sink down
+      this.bubbleUp(i);
+      this.sinkDown(i);
+      break;
+    }
   },
 
   size: function() {
@@ -57,7 +72,7 @@ BinaryHeap.prototype = {
     this.content = [];
   },
 
-  // from index n, continually swaps with parent until it reaches the top
+  // from index idx, continually swaps with parent until it reaches the top
   // parent math is a little funny since we're using zero-indexed arrays
   bubbleUp: function(idx) {
     // get the element to be moved
@@ -81,6 +96,8 @@ BinaryHeap.prototype = {
     }
   },
 
+  // from index idx, continually sqaps down with children until it's out of bounds
+  // again, child math looks a little funky because of zero-indexed arrays
   sinkDown: function(idx) {
     // get the target element and it's score
     var element = this.content[idx];
@@ -88,10 +105,8 @@ BinaryHeap.prototype = {
     // save a var for length of content so we don't have to keep calculating it
     var length = this.content.length;
 
-    // loop through (while true)
     while(true) {
       // compute children indices.
-      // again a little funky because of zero-indexing
       var firstChildIdx = ((idx + 1) * 2) - 1;   // secondChildIdx - 1;
       var secondChildIdx = firstChildIdx + 1;    // (idx + 1) * 2;
 
@@ -102,9 +117,8 @@ BinaryHeap.prototype = {
       if (firstChildIdx < length) {
         var child1 = this.content[firstChildIdx];
         var child1Score = child1; // to be replaced with scorefunction
-        // if the child has a lower score than the current element
         if (child1Score < elementScore) {
-          //swap to the first child
+          //if child is lower, swap there
           swapIdx = firstChildIdx;
         }
       }
@@ -112,13 +126,12 @@ BinaryHeap.prototype = {
       if (secondChildIdx < length) {
         var child2 = this.content[secondChildIdx];
         var child2Score = child2;
-        // and is lower than both
         if (child2Score < (swapIdx === null ? elementScore : child1Score)) {
-          //swap to the second child instead
+          //only swap here if it's lower than both
           swapIdx = secondChildIdx;
         }
       }
-      // break if we don't have a swap index
+      // break if neither are lower.
       if (swapIdx === null) {
         break;
       }
