@@ -16,27 +16,38 @@
 
 	<script type="text/javascript">
 		//  for now, putting the test js here, until i get jasmine or something else going
-		console.log('------ creating heap');
-
-		var testData = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 
 		var bh = new BinaryHeap();
-		bh.pushArray(testData);
 
-		// function getRandomInt(min, max) {
-		//   return Math.floor(Math.random() * (max - min)) + min;
-		// }
-		// // var length = 31;
-		// var length = testData.length;
+		var testData1 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+		console.log('------ creating heap with ordered data');
+		console.log(testData1);
+		bh.pushArray(testData1);
 
-		// for (var i = 0; i < length; i++) {
-		// 	// bh.push(getRandomInt(0,99));
-		// 	bh.push(testData[i]);
-		// }
+		var popped1 = "";
+		while (bh.size() > 0) {
+			popped1 += bh.pop() + " ";
+		}
 
-		bh.display('text', 'displayArea');
+		console.log('------ popping items until empty');
+		console.log(popped1);
 
+		var testData2 = [11,0,1,5,7,8,12,2,9,10,14,6,3,13,4];
+		console.log('------ creating heap with unorderd data');
+		console.log(testData2);
+		bh.pushArray(testData2);
 
+		var popped2 = "";
+		while (bh.size() > 0) {
+			popped2 += bh.pop() + " ";
+		}
+		console.log('------ popping items until empty');
+		console.log(popped2);
+
+		console.log('------ refilling with both sets for display');
+		bh.pushArray(testData1);
+		bh.pushArray(testData2);
+		bh.display();
 
 	</script>
 
