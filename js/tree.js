@@ -61,11 +61,10 @@ Tree.prototype.createDisplayData = function(root) {
 
 
 // at the moment, this function is destructive and breaks root.
-// working on figuring that out, but nothing
-// for now, don't call it unless you're done manipulating the tree
+// solution for now is to pass it a new object with just the data to be printed
+// see Tree.display()
 Tree.prototype.displayTree = function(root, method) {
 
-  console.log('displaying tree');
   method = method || 'd3';
 
   if (method === 'd3' && typeof d3 === 'object') {
@@ -77,7 +76,7 @@ Tree.prototype.displayTree = function(root, method) {
      width = 960 - margin.right - margin.left,
      height = 500 - margin.top - margin.bottom;
 
-    var i = 0; // set up a cursor
+    var i = 0;
 
     var tree = d3.layout.tree()
      .size([height, width]);
@@ -85,11 +84,20 @@ Tree.prototype.displayTree = function(root, method) {
     var diagonal = d3.svg.diagonal()
      .projection(function(d) { return [d.x, d.y]; });
 
-    var svg = d3.select("body").append("svg")
-     .attr("width", width + margin.right + margin.left)
-     .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // kinda hacky for now.  if svg already exists, delete it
+    var existingSvg = document.getElementById('treeDisplay');
+    if (existingSvg) {
+      existingSvg.remove();
+    }
+
+
+    var svg = d3
+     .select('body').append('svg')
+     .attr('width', width + margin.right + margin.left)
+     .attr('height', height + margin.top + margin.bottom)
+     .attr('id', 'treeDisplay')
+     .append('g')
+     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     root = root || this.root;
 
@@ -102,14 +110,17 @@ Tree.prototype.displayTree = function(root, method) {
        links = tree.links(nodes);
 
       // Normalize for fixed-depth.
-      nodes.forEach(function(d) { d.y = d.depth * 100; });
+      nodes.forEach(function(d) { d.y = d.depth * 80; });
 
       // Declare the nodesâ€¦
-      var node = svg.selectAll("g.node")
+      var node = svg
+       .selectAll("g.node")
        .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
       // Enter the nodes.
-      var nodeEnter = node.enter().append("g")
+      var nodeEnter = node
+       .enter()
+       .append("g")
        .attr("class", "node")
        .attr("transform", function(d) {
         return "translate(" + d.x + "," + d.y + ")"; });
