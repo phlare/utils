@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="../binaryHeap.js"></script>
+	<title>Binary Heap</title>
+
+</head>
+<body>
+	<a href="index.html">back to list</a><br />
+	<p>
+		binaryHeap.js loaded. check the console for output.
+	</p>
+	<p></p>
+	Display:<br/>
+	<pre id="displayArea"><pre>
+
+	<script type="text/javascript">
+		//  for now, putting the test js here, until i get jasmine or something else going
+		console.log('------ creating heap');
+
+		var testData = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+
+		var bh = new BinaryHeap();
+		bh.pushArray(testData);
+
+		// function getRandomInt(min, max) {
+		//   return Math.floor(Math.random() * (max - min)) + min;
+		// }
+		// // var length = 31;
+		// var length = testData.length;
+
+		// for (var i = 0; i < length; i++) {
+		// 	// bh.push(getRandomInt(0,99));
+		// 	bh.push(testData[i]);
+		// }
+
+		bh.display('text', 'displayArea');
+
+
+
+	</script>
+
+</body>
+</html>
