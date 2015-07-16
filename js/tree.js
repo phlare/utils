@@ -35,8 +35,29 @@ Tree.prototype.addNode = function(key, data, parent) {
 
 // keeping this one unchainable for now because I don't know how to preserve 'this'
 Tree.prototype.display = function() {
-  this.displayTree(this.root, 'd3');
+
+  // need to make a now object for D3 to use
+  // otherwise passing our list off to D3 can be destructive.
+  var displayData = this.createDisplayData(this.root);
+  // this way we can print at any point and still return the original Tree
+  this.displayTree(displayData, 'd3');
+  return this;
 }
+
+Tree.prototype.createDisplayData = function(root) {
+  var displayData = {
+    root: root.data,
+    key: root.key,
+    children: []
+  };
+  var numChildren = root.children.length;
+  if (numChildren > 0) {
+    for (var i=0; i<numChildren; i++) {
+      displayData.children.push(this.createDisplayData(root.children[i]));
+    }
+  }
+  return displayData;
+};
 
 
 // at the moment, this function is destructive and breaks root.
