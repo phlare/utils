@@ -7,6 +7,12 @@ var LinkedList = function() {
   return this;
 };
 
+// simple class to describe a node of the linked list
+var ListNode = function(data) {
+  this.data = data;
+  this.next = null;
+  return this;
+};
 
 LinkedList.prototype = {
   // function for adding nodes
@@ -165,11 +171,4 @@ LinkedList.prototype = {
     this.count = 0;
     return this;
   }
-};
-
-// simple class to describe a node of the linked list
-var ListNode = function(data) {
-  this.data = data;
-  this.next = null;
-  return this;
 };
