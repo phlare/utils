@@ -8,10 +8,23 @@ var Tree = function() {
   return this;
 };
 
+// A class used to describe a basic tree node
+// i've decided to include a parent pointer for now
+var TreeNode = function(key, data, parent) {
+  this.key = key;
+  this.data = data || null;
+  this.children = [];
+  this.parent = parent || null;
+  // this.level = 0  // will impelemnt later perhaps;
+
+  return this;
+};
+
 // a method to add to the tree.
 // if parent is given, it will become the child of that parent
 // otherwise, it will become the child of root
 // else it will become root
+// this function will likely be overwritten in a specialized tree
 Tree.prototype.addNode = function(key, data, parent) {
   if (typeof key !== 'undefined') {
     data = data || null;
@@ -31,7 +44,105 @@ Tree.prototype.addNode = function(key, data, parent) {
     this.count++;
   }
   return this;
-}
+};
+
+Tree.prototype.findNode = function(key) {
+  if (typeof key !== 'undefined') {
+    // call the recursive remove function, starting at head
+    return this.findNodeDepthFirst(key, this.root, null);
+  }
+  return false;
+};
+
+// a basic method to find a node in the tree
+// starts at parent node, recursively searches in children
+// this function will likely be overwritten in a specialized tree
+Tree.prototype.findNodeDepthFirst = function(key, node, parent) {
+  node = node || this.root || null;
+  parent = parent || null;
+  var found = false;
+
+  if (node.key === key) {
+    // console.log("found it!");
+    found = node;
+
+  } else if (node.children.length > 0) {
+    // recursively call on children of this node, but stop if we find it
+    var i = 0;
+    while(i < node.children.length && !found) {
+      found = this.findNodeDepthFirst(key, node.children[i], node);
+      i++;
+    }
+    return found;
+  }
+  return found;
+};
+
+// basic removal function.
+Tree.prototype.removeNode = function(key) {
+  if (typeof key !== 'undefined') {
+    var nodeToRemove = this.findNode(key);
+    if (nodeToRemove) {
+      this.performRemoval(nodeToRemove);
+    }
+  }
+  return this;
+};
+
+// the guts of the removal function.
+// this will probably be overwritten in most specialized trees
+// for the base case, no specific rules.
+// if a node with children gets deleted, the first of it's children will take it's place
+Tree.prototype.performRemoval = function(node) {
+  var parent = node.parent;
+
+  if (node.children.length === 0) {
+    // if node has no children, just remove it
+    if (parent !== null) {
+      // remove this record from parent.children
+      var idx = parent.children.indexOf(node);
+      if (idx !== -1) {
+        parent.children.splice(idx,1);
+      }
+    } else {
+      this.root = null;
+    }
+  } else if (node.children.length === 1) {
+    // if only one child,  that child takes this node's place
+    node.children[0].parent = parent;
+    if (parent !== null) {
+      var idx = parent.children.indexOf(node);
+      if (idx !== -1) {
+        parent.children[idx] = node.children[0];
+      }
+    } else {
+      this.root = node.children[0];
+    }
+
+  } else {
+    // the first child of the node will replace it
+    // and any other siblings will become children of that first child
+    var first = node.children.shift();
+    var rest = node.children;
+
+    // add the "rest" to the children of first
+    first.children = first.children.concat(rest);
+    first.parent = parent;
+    // now do the replacement
+    if (parent !== null) {
+      var idx = parent.children.indexOf(node);
+      if (idx !== -1) {
+        parent.children[idx] = first;
+      }
+    } else {
+      this.root = first;
+    }
+  }
+  delete node;
+  this.count --;
+  return true;
+};
+
 
 // keeping this one unchainable for now because I don't know how to preserve 'this'
 Tree.prototype.display = function() {
@@ -42,7 +153,7 @@ Tree.prototype.display = function() {
   // this way we can print at any point and still return the original Tree
   this.displayTree(displayData, 'd3');
   return this;
-}
+};
 
 Tree.prototype.createDisplayData = function(root) {
   var displayData = {
@@ -68,8 +179,8 @@ Tree.prototype.displayTree = function(root, method) {
   method = method || 'd3';
 
   if (method === 'd3' && typeof d3 === 'object') {
-    // this d3 code adapted from this article:
-    // http://www.d3noob.org/2014/01/tree-diagrams-in-d3js_11.html
+    // this d3 code adapted from this collapsible tree block by mbostock
+    // http://bl.ocks.org/mbostock/4339083
 
     // ************** Generate the tree diagram  *****************
     var margin = {top: 50, right: 80, bottom: 50, left: 80},
@@ -224,19 +335,4 @@ Tree.prototype.displayTree = function(root, method) {
       update(d);
     }
   }
-};
-
-// basic find method
-
-// A class used to describe a basic tree node
-// i've decided to include a parent pointer for now
-var TreeNode = function(key, data, parent) {
-  this.key = key;
-  this.data = data || null;
-  this.children = [];
-  this.parent = parent || null;
-
-  // this.level = 0  // will impelemnt later perhaps;
-
-  return this;
 };
