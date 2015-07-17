@@ -144,6 +144,7 @@ BinaryHeap.prototype = {
   },
 
   display: function(method, containerId) {
+    // TODO: develop a d3 display or similar for this.
     method = method || 'text';
     containerId = containerId || 'displayArea';
     if (method === 'text') {
