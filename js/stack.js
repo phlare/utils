@@ -1,20 +1,20 @@
 // an array-based stack
 // javascript's builtin push and pop are totally fine for this
 var Stack = function() {
-  this.internalStack = [];
+  this.s = [];
 
   return this;
 };
 
 Stack.prototype = {
   push: function(data) {
-    this.internalStack.push(data);
+    this.s.push(data);
   },
   peek: function() {
-    return this.internalStack[this.internalStack.length-1];
+    return this.s[this.s.length-1];
   },
   pop: function() {
-    return this.internalStack.pop();
+    return this.s.pop();
   },
   display: function(method, containerId) {
     method = method || 'text';
@@ -30,13 +30,13 @@ Stack.prototype = {
     // todo: sanitize for XSS -- right now this is just to help me learn
     var output = '';
     var breakafter = 0;
-    var count = this.internalStack.length;
+    var count = this.s.length;
     if (count === 0) {
       output = 'stack is empty';
     }
     // print backwards so the 'top' is at the top
     for (var i = count-1; i >=0; i--) {
-      output += '[ ' + this.internalStack[i] + ' ]';
+      output += '[ ' + this.s[i] + ' ]';
 
       output += '<br />';
     }
