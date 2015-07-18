@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="../queue.js"></script>
+	<!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<link rel="stylesheet" type="text/css" href="../css/thing.css" /> -->
+	<title>Queue</title>
+
+</head>
+<body>
+	<a href="index.html">back to list</a><br />
+	<p>
+		queue.js loaded. check the console for output.
+	</p>
+	<p></p>
+	Display:<br/>
+	<pre id="displayArea"><pre>
+
+	<script type="text/javascript">
+		var q = new Queue(5);
+
+
+
+		q.push(0);
+		q.push(1);
+		q.push(2);
+		q.push(3);
+		q.push(4);
+		q.push(5);
+		q.push(6);
+		q.push(7);
+		q.push(8);
+		q.push(9);
+		q.push(10);
+
+
+		q.display();
+
+		// q.display();
+
+
+	</script>
+
+</body>
+</html>
