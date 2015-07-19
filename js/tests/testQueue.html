@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script type="text/javascript" src="../simpleQueue.js"></script>
 	<script type="text/javascript" src="../queue.js"></script>
-	<!-- <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<link rel="stylesheet" type="text/css" href="../css/thing.css" /> -->
 	<title>Queue</title>
-
+	<style type="text/css">
+		.two-col {
+			float:left;
+			width:45%;
+			margin: 0 2.5%;
+		}
+	</style>
 </head>
 <body>
 	<a href="index.html">back to list</a><br />
@@ -14,30 +19,106 @@
 	</p>
 	<p></p>
 	Display:<br/>
-	<pre id="displayArea"><pre>
+	<div class="two-col">
+		<h3>using builtin push() and shift()</h3>
+		<pre id="displayArea1"><pre>
+	</div>
+	<div class="two-col">
+		<h3>customized queue</h3>
+		<pre id="displayArea2"><pre>
+	</div>
 
 	<script type="text/javascript">
-		var q = new Queue(5);
+		var queueTest = {
+			sq: null,
+			q: null,
+			benchmarks: {},
+			init: function() {
 
+				console.log('initializing objects...');
+				this.q = new Queue();
+				this.sq = new SimpleQueue();
 
+				this.display();
 
-		q.push(0);
-		q.push(1);
-		q.push(2);
-		q.push(3);
-		q.push(4);
-		q.push(5);
-		q.push(6);
-		q.push(7);
-		q.push(8);
-		q.push(9);
-		q.push(10);
+				this.runBenchmarks();
 
+				this.display();
 
-		q.display();
+			},
+			display: function() {
+				this.sq.display('text', 'displayArea1');
+				this.q.display('text','displayArea2');
+			},
+			runBenchmarks: function() {
+				for (var i = 100; i <= 1000000; i *= 1.4) {
+					this.benchmarks[i] = this.benchmark(i);
+				}
 
-		// q.display();
+				console.log(this.benchmarks);
+			},
+			benchmark: function(n) {
 
+				var start = 0;
+				var stop = 0;
+
+				var benchData = {
+					'n' : n,
+					'push' : {
+						'sq' : 0,
+						'q' : 0
+					},
+					'shift' : {
+						'sq' : 0,
+						'q' : 0
+					}
+				};
+
+				console.log('pushing ' + n + ' to SimpleQueue');
+				start = performance.now();
+				this.multiplePushes(this.sq, n);
+				stop = performance.now();
+				benchData.push.sq = (stop - start);
+
+				console.log('pushing ' + n + ' to Queue');
+				start = performance.now();
+				this.multiplePushes(this.q, n);
+				stop = performance.now();
+				benchData.push.q = (stop - start);
+
+				console.log('shifting ' + n + ' from SimpleQueue');
+				start = performance.now();
+				this.multipleShifts(this.sq, n);
+				stop = performance.now();
+				benchData.shift.sq = (stop - start);
+
+				console.log('shifting ' + n + ' from Queue');
+				start = performance.now();
+				this.multipleShifts(this.q, n);
+				stop = performance.now();
+				benchData.shift.q = (stop - start);
+
+				return benchData;
+
+			},
+
+			multipleShifts: function(queue, n) {
+				n = n || 5;
+				queue = queue || this.q;
+				for (var i = 0; i < n; i++) {
+					var val = queue.shift();
+				}
+			},
+			multiplePushes: function(queue, n) {
+				n = n || 5;
+				queue = queue || this.q;
+				for (var i = 0; i < n; i++) {
+					queue.push(i);
+				}
+			}
+		};
+
+		queueTest.init();
 
 	</script>
 
