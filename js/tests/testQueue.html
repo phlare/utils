@@ -6,9 +6,29 @@
 	<title>Queue</title>
 	<style type="text/css">
 		.two-col {
+			background-color: #eeeeee;
 			float:left;
-			width:45%;
-			margin: 0 2.5%;
+			width:46%;
+			margin: 4px 1%;
+			height: 300px;
+			overflow-y: scroll;
+			padding: 4px 1%;
+		}
+		.bench_head {
+			float: left;
+			margin: 0 4px;
+			width: 100px;
+			font-weight: 800;
+		}
+		.bench_cell {
+			float: left;
+			padding: 0px;
+			margin: 0 4px;
+			width: 100px;
+			overflow-x: hidden;
+		}
+		.row {
+			clear:both;
 		}
 	</style>
 </head>
@@ -19,20 +39,23 @@
 	</p>
 	<p></p>
 	Display:<br/>
-	<div class="two-col">
-		<h3>using builtin push() and shift()</h3>
-		<pre id="displayArea1"><pre>
+	<div id="displayQueues">
+		<div class="two-col">
+			<h3>using builtin push() and shift()</h3>
+			<pre id="displayArea1"><pre>
+		</div>
+		<div class="two-col">
+			<h3>customized queue</h3>
+			<pre id="displayArea2"><pre>
+		</div>
 	</div>
-	<div class="two-col">
-		<h3>customized queue</h3>
-		<pre id="displayArea2"><pre>
-	</div>
+	<div id="benchmarks"></div>
 
 	<script type="text/javascript">
 		var queueTest = {
 			sq: null,
 			q: null,
-			benchmarks: {},
+			benchmarks: [],
 			init: function() {
 
 				console.log('initializing objects...');
@@ -40,22 +63,21 @@
 				this.sq = new SimpleQueue();
 
 				this.display();
-
-				this.runBenchmarks();
-
-				this.display();
+				this.runBenchmarks(10, 400000, 1.5);
 
 			},
 			display: function() {
 				this.sq.display('text', 'displayArea1');
 				this.q.display('text','displayArea2');
 			},
-			runBenchmarks: function() {
-				for (var i = 100; i <= 1000000; i *= 1.4) {
-					this.benchmarks[i] = this.benchmark(i);
+			runBenchmarks: function(min_n, max_n, scale) {
+				min_n = min_n || 100;
+				max_n = max_n || 100000;
+				scale = scale || 1.5;
+				for (var i = min_n; i <= max_n; i *= scale) {
+					this.benchmarks.push(this.benchmark(i));
 				}
-
-				console.log(this.benchmarks);
+				this.printBenchmark();
 			},
 			benchmark: function(n) {
 
@@ -63,12 +85,12 @@
 				var stop = 0;
 
 				var benchData = {
-					'n' : n,
-					'push' : {
+					'n' : parseInt(n, 10),
+					'pushes' : {
 						'sq' : 0,
 						'q' : 0
 					},
-					'shift' : {
+					'shifts' : {
 						'sq' : 0,
 						'q' : 0
 					}
@@ -78,27 +100,55 @@
 				start = performance.now();
 				this.multiplePushes(this.sq, n);
 				stop = performance.now();
-				benchData.push.sq = (stop - start);
+				benchData.pushes.sq = (stop - start);
 
 				console.log('pushing ' + n + ' to Queue');
 				start = performance.now();
 				this.multiplePushes(this.q, n);
 				stop = performance.now();
-				benchData.push.q = (stop - start);
+				benchData.pushes.q = (stop - start);
 
 				console.log('shifting ' + n + ' from SimpleQueue');
 				start = performance.now();
 				this.multipleShifts(this.sq, n);
 				stop = performance.now();
-				benchData.shift.sq = (stop - start);
+				benchData.shifts.sq = (stop - start);
 
 				console.log('shifting ' + n + ' from Queue');
 				start = performance.now();
 				this.multipleShifts(this.q, n);
 				stop = performance.now();
-				benchData.shift.q = (stop - start);
+				benchData.shifts.q = (stop - start);
 
 				return benchData;
+
+			},
+			printBenchmark: function() {
+				var bmContainer = document.getElementById('benchmarks');
+				out = 'Benchmark:<br/>';
+				if (this.benchmarks.length === 0) {
+					out += 'no benchmarks';
+				} else {
+					out += '<div class="row">';
+					out += '    <div class="bench_head">n</div>';
+					out += '    <div class="bench_head">sq push</div>';
+					out += '    <div class="bench_head">q push</div>';
+					out += '    <div class="bench_head">sq shift</div>';
+					out += '    <div class="bench_head">q shift</div>';
+					out += '</div>'
+
+					for (var i = 0; i < this.benchmarks.length; i++) {
+						out += '<div class="row">';
+						out += '    <div class="bench_cell">' + this.benchmarks[i]['n'] + '</div>';
+						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['sq'] * 1000) / 1000) + '</div>';
+						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['q'] * 1000) / 1000) + '</div>';
+						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['sq'] * 1000) / 1000) + '</div>';
+						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['q'] * 1000) / 1000) + '</div>';
+						out += '</div>';
+					}
+				}
+
+				bmContainer.innerHTML = out;
 
 			},
 
