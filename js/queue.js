@@ -14,7 +14,7 @@ var Queue = function(initialCapacity) {
   this.length = 0;
   // keep a fixed capacity and remember the initial capacity
   this.capacity = (typeof initialCapacity !== 'undefined') ? initialCapacity : 200;
-  this.initialCapacity = initialCapacity;
+  this.initialCapacity = this.capacity;
   this.q.length = this.capacity;
 
   return this;
@@ -60,7 +60,6 @@ Queue.prototype = {
 
     // reduce size of array if necessary
     if (this.length === this.capacity/4 && this.length >= this.initialCapacity) {
-      console.log('shrinking');
       this.shrinkCapacity();
     }
     return tmp;
