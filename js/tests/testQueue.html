@@ -40,7 +40,7 @@
 		queue.js loaded. check the console for output.
 	</p>
 	<p></p>
-	Display:<br/>
+	<!--Display:<br/>
 	<div id="displayQueues">
 		<div class="two-col">
 			<h3>using builtin push() and shift()</h3>
@@ -50,7 +50,7 @@
 			<h3>customized queue</h3>
 			<pre id="displayArea2"><pre>
 		</div>
-	</div>
+	</div>-->
 	<div id="benchmarks"></div>
 
 	<script type="text/javascript">
@@ -64,22 +64,26 @@
 				this.q = new Queue();
 				this.sq = new SimpleQueue();
 
-				this.display();
-				this.runBenchmarks(10, 400000, 1.5);
+				var startVal = 10;
+				var endVal = 1000;
+				var scale_fn = null;
+				this.runBenchmarks(startVal, endVal, scale_fn);
 
 			},
 			display: function() {
 				this.sq.display('text', 'displayArea1');
 				this.q.display('text','displayArea2');
 			},
-			runBenchmarks: function(min_n, max_n, scale) {
+			runBenchmarks: function(min_n, max_n, scale_fn) {
+				// default to exponential
 				min_n = min_n || 100;
 				max_n = max_n || 100000;
-				scale = scale || 1.5;
-				for (var i = min_n; i <= max_n; i *= scale) {
+				scale_fn = scale_fn || function(i) { return i + (2 * min_n); };
+
+				for (var i = min_n; i <= max_n; i = scale_fn(i)) {
 					this.benchmarks.push(this.benchmark(i));
 				}
-				this.printBenchmark();
+				this.printBenchmark('d3', scale_fn);
 			},
 			benchmark: function(n) {
 
@@ -125,33 +129,153 @@
 				return benchData;
 
 			},
-			printBenchmark: function() {
-				var bmContainer = document.getElementById('benchmarks');
-				out = 'Benchmark:<br/>';
-				if (this.benchmarks.length === 0) {
-					out += 'no benchmarks';
-				} else {
-					out += '<div class="row">';
-					out += '    <div class="bench_head">n</div>';
-					out += '    <div class="bench_head">sq push</div>';
-					out += '    <div class="bench_head">q push</div>';
-					out += '    <div class="bench_head">sq shift</div>';
-					out += '    <div class="bench_head">q shift</div>';
-					out += '</div>'
+			printBenchmark: function(method, scale_fn, container) {
 
-					for (var i = 0; i < this.benchmarks.length; i++) {
+				if (typeof scale_fn !== 'object') {
+					// default to exponential, just so we don't spin forever on accidents
+					scale_fn = function(n) { return (n * n); };
+				}
+				var bmContainer = container || document.getElementById('benchmarks');
+				var method = method || 'text';
+
+				if (method === 'text') {
+					out = 'Benchmark:<br/>';
+					if (this.benchmarks.length === 0) {
+						out += 'no benchmarks';
+					} else {
 						out += '<div class="row">';
-						out += '    <div class="bench_cell">' + this.benchmarks[i]['n'] + '</div>';
-						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['sq'] * 1000) / 1000) + '</div>';
-						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['q'] * 1000) / 1000) + '</div>';
-						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['sq'] * 1000) / 1000) + '</div>';
-						out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['q'] * 1000) / 1000) + '</div>';
-						out += '</div>';
+						out += '    <div class="bench_head">n</div>';
+						out += '    <div class="bench_head">sq push</div>';
+						out += '    <div class="bench_head">q push</div>';
+						out += '    <div class="bench_head">sq shift</div>';
+						out += '    <div class="bench_head">q shift</div>';
+						out += '</div>'
+
+						for (var i = 0; i < this.benchmarks.length; i++) {
+							out += '<div class="row">';
+							out += '    <div class="bench_cell">' + this.benchmarks[i]['n'] + '</div>';
+							out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['sq'] * 1000) / 1000) + '</div>';
+							out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['pushes']['q'] * 1000) / 1000) + '</div>';
+							out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['sq'] * 1000) / 1000) + '</div>';
+							out += '    <div class="bench_cell">' + (Math.round(this.benchmarks[i]['shifts']['q'] * 1000) / 1000) + '</div>';
+							out += '</div>';
+						}
+					}
+
+					bmContainer.innerHTML = out;
+				} else if (method === 'd3') {
+					var margin = {top: 20, right: 120, bottom: 30, left: 80};
+					var width = 1280 - margin.left - margin.right;
+					var height = 800 - margin.top - margin.bottom;
+
+					var x = d3.scale.linear()
+					    .range([0, width]);
+
+					var y = d3.scale.log()
+					    .range([height, 0]);
+
+					var color = d3.scale.category10(); // WAT? see http://bl.ocks.org/aaizemberg/78bd3dade9593896a59d
+
+					var xAxis = d3.svg.axis()
+					    .scale(x)
+					    .orient("bottom");
+
+					var yAxis = d3.svg.axis()
+					    .scale(y)
+					    .orient("left");
+
+					var line = d3.svg.line()
+						.interpolate("basis")
+					    .x(function(d) { return x(d.n); })
+					    .y(function(d) { return y(d.elapsed_time); });
+
+					var svg = d3.select("#benchmarks").append("svg")
+					    .attr("width", width + margin.left + margin.right)
+					    .attr("height", height + margin.top + margin.bottom)
+					  .append("g")
+					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+					var benchcount = this.benchmarks.length;
+					if (benchcount > 0 ) {
+						var data = [];
+						color.domain(['push_simpleQueue','push_queue','shift_simpleQueue','shift_queue']);
+
+						for (var i = 0; i < benchcount; i++) {
+							var datum = {};
+							var currentBM = this.benchmarks[i];
+							datum['n'] = currentBM['n'];
+							datum['push_simpleQueue'] = currentBM['pushes']['sq'];
+							datum['push_queue'] = currentBM['pushes']['q'];
+							datum['shift_simpleQueue'] = currentBM['shifts']['sq'];
+							datum['shift_queue'] = currentBM['shifts']['q'];
+							data.push(datum);
+						}
+
+						console.log(data);
+
+						// map all this data to a few colors that have a series of datapoints
+						var results = color.domain().map(function(name) {
+							return {
+								name: name,
+								values: data.map( function(d) {
+									return {n: parseInt(d.n, 10), elapsed_time: +d[name]};
+								})
+							};
+						});
+
+						console.log(results);
+
+						// set range of x to be the extent of 'n' in the data
+						x.domain(d3.extent(data, function(d) { return d.n; }));
+						// set range of y to be the min and max of the found 'times'
+						y.domain([
+							d3.min(results, function(r) { return d3.min(r.values, function(v) { return v.elapsed_time; }); }),
+							d3.max(results, function(r) { return d3.max(r.values, function(v) { return v.elapsed_time; }); })
+						]);
+
+
+						svg.append("g")
+							.attr("class", "x axis")
+							.attr("transform", "translate(0," + height + ")")
+							.call(xAxis)
+							.append("text")
+							.attr("y", -14)
+							.attr("x", width - 20)
+							.attr("dy", ".71em")
+							.text("n");
+
+						svg.append("g")
+							.attr("class", "y axis")
+							.call(yAxis)
+							.append("text")
+							.attr("y", 6)
+							.attr("x", -70)
+							.attr("dy", ".71em")
+							.attr("transform", "rotate(-90)")
+							.style("text-ancor", "end")
+							.text("Time (ms)");
+
+						var result = svg.selectAll(".result")
+							.data(results)
+							.enter().append("g")
+							.attr("class", "result");
+
+						result.append("path")
+							.attr("class", "line")
+							.attr("d", function(d) { return line(d.values); })
+							.style("stroke", function(d) { return color(d.name); })
+							.attr("fill", "none");
+
+						result.append("text")
+					      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+					      .attr("transform", function(d) { return "translate(" + x(d.value.n) + "," + y(d.value.elapsed_time) + ")"; })
+					      .attr("x", 3)
+					      .attr("dy", ".35em")
+					      .style("font-size", "12px")
+					      .text(function(d) { return d.name; });
 					}
 				}
-
-				bmContainer.innerHTML = out;
-
 			},
 
 			multipleShifts: function(queue, n) {
