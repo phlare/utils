@@ -1,6 +1,31 @@
 body {
   font: 10px sans-serif;
 }
+.two-col {
+	background-color: #eeeeee;
+	float:left;
+	width:46%;
+	margin: 4px 1%;
+	height: 300px;
+	overflow-y: scroll;
+	padding: 4px 1%;
+}
+.bench_head {
+	float: left;
+	margin: 0 4px;
+	width: 100px;
+	font-weight: 800;
+}
+.bench_cell {
+	float: left;
+	padding: 0px;
+	margin: 0 4px;
+	width: 100px;
+	overflow-x: hidden;
+}
+.row {
+	clear:both;
+}
 
 .axis path,
 .axis line {
