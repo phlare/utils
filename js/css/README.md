@@ -1,3 +1,0 @@
-# utils/js
-Javascript Utils
-
